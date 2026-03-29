@@ -14,107 +14,116 @@
             --led-font: 'Digital Numbers', sans-serif;
         }
 
+        * { box-sizing: border-box; }
         body {
             background-color: var(--dark-bg);
             color: var(--neon-green);
             font-family: 'Courier New', Courier, monospace;
             margin: 0; padding: 20px;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 160vh;
+            min-height: 180vh; /* Tăng chiều cao để cuộn trang */
         }
 
         #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.15; }
 
-        /* COUNTDOWN SIÊU NỔI BẬT - 1 HÀNG NGANG */
-        .countdown-section {
-            width: 100%; max-width: 1300px;
-            text-align: center; padding: 50px 20px;
-            border: 3px double var(--warning-gold);
+        /* --- COUNTDOWN SIÊU NỔI BẬT --- */
+        .countdown-container {
+            width: 100%; max-width: 1400px;
+            text-align: center; padding: 60px 20px;
+            border: 4px double var(--warning-gold);
             background: rgba(0, 0, 0, 0.95);
-            margin-bottom: 40px;
-            box-shadow: 0 0 40px rgba(255, 204, 0, 0.5);
+            margin-bottom: 50px;
+            box-shadow: 0 0 50px rgba(255, 204, 0, 0.4);
         }
-        .countdown-title { color: var(--warning-gold); font-weight: 900; letter-spacing: 8px; margin-bottom: 30px; font-size: 1.5em; text-transform: uppercase; }
+        .countdown-title { 
+            color: var(--warning-gold); font-weight: 900; letter-spacing: 10px; 
+            margin-bottom: 30px; font-size: 1.6em; text-transform: uppercase; 
+        }
         
         #timer { 
             font-family: var(--led-font); 
-            font-size: 5.5em; /* Kích thước cực đại */
+            font-size: 6vw; /* Tự động co giãn theo chiều rộng màn hình */
             color: #fff; 
-            text-shadow: 0 0 30px #fff; 
-            display: flex; 
-            justify-content: center; 
+            text-shadow: 0 0 35px #fff, 0 0 10px var(--warning-gold); 
+            display: flex; justify-content: space-between; /* Kéo giãn rộng ra */
             align-items: center; 
-            gap: 20px;
             font-weight: 900;
-            white-space: nowrap;
+            padding: 0 20px;
         }
 
+        /* --- THỐNG KÊ CHI TIẾT --- */
         .terminal-container {
-            width: 95%; max-width: 1100px;
+            width: 95%; max-width: 1200px;
             border: 1px solid var(--neon-green);
-            padding: 25px; background: rgba(0, 0, 0, 0.95);
+            padding: 30px; background: rgba(0, 0, 0, 0.95);
             box-shadow: 0 0 30px rgba(0, 255, 65, 0.1);
         }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 25px 0; }
-        .stat-card { border: 1px solid rgba(0, 255, 65, 0.3); padding: 20px; text-align: center; }
-        .stat-value { font-family: var(--led-font); font-size: 2.2em; display: block; margin-bottom: 8px; }
-        .usd-val { font-size: 0.9em; color: #888; font-weight: bold; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 30px 0; }
+        .stat-card { border: 1px solid rgba(0, 255, 65, 0.3); padding: 25px; text-align: center; background: rgba(0,255,65,0.02); }
+        .stat-value { font-family: var(--led-font); font-size: 2.5em; display: block; margin-bottom: 10px; color: #fff; }
+        .usd-val { font-size: 1em; color: #888; font-weight: bold; }
 
-        .holder-section { margin-top: 40px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; }
-        th, td { border: 1px solid rgba(0, 255, 65, 0.2); padding: 15px; text-align: center; }
-        th { background: rgba(0, 255, 65, 0.15); color: var(--matrix-blue); letter-spacing: 2px; }
+        /* --- BẢNG TOP 10 --- */
+        .holder-section { margin-top: 50px; }
+        .section-header { font-size: 1.2em; border-left: 5px solid var(--neon-green); padding-left: 20px; margin-bottom: 20px; color: var(--matrix-blue); }
+        table { width: 100%; border-collapse: collapse; font-size: 1em; }
+        th, td { border: 1px solid rgba(0, 255, 65, 0.2); padding: 18px; text-align: center; }
+        th { background: rgba(0, 255, 65, 0.15); color: var(--warning-gold); text-transform: uppercase; letter-spacing: 2px; }
+        tr:hover { background: rgba(0, 255, 65, 0.05); }
 
-        .links-container { display: flex; justify-content: center; gap: 25px; margin-top: 30px; }
+        .links-container { display: flex; justify-content: center; gap: 30px; margin-top: 40px; padding-bottom: 40px; }
         .p2p-link {
-            color: var(--matrix-blue); text-decoration: none; border: 1px solid var(--matrix-blue);
-            padding: 12px 25px; text-transform: uppercase; font-size: 0.85em; transition: 0.3s;
+            color: var(--matrix-blue); text-decoration: none; border: 2px solid var(--matrix-blue);
+            padding: 15px 35px; text-transform: uppercase; font-size: 0.9em; font-weight: bold; transition: 0.3s;
         }
-        .p2p-link:hover { background: var(--matrix-blue); color: #000; box-shadow: 0 0 15px var(--matrix-blue); }
+        .p2p-link:hover { background: var(--matrix-blue); color: #000; box-shadow: 0 0 20px var(--matrix-blue); }
 
         .init-btn { 
             color: var(--warning-gold); border: 2px solid var(--warning-gold); 
-            padding: 18px; cursor: pointer; margin-bottom: 25px; 
-            text-transform: uppercase; font-weight: bold; width: 100%; text-align: center;
+            padding: 20px; cursor: pointer; margin-bottom: 30px; 
+            text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; font-size: 1.2em;
+            background: rgba(255, 204, 0, 0.05);
         }
 
-        .shake-effect { animation: shake 0.6s both; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 20% {transform: translateX(-5px);} 40% {transform: translateX(5px);} 60% {transform: translateX(-5px);} 80% {transform: translateX(5px);} }
+        .shake-effect { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-6px);} 75% {transform: translateX(6px);} }
     </style>
 </head>
 <body>
 
 <canvas id="matrix-canvas"></canvas>
 
-<div class="countdown-section">
+<div class="countdown-container">
     <div class="countdown-title">COUNTDOWN TO SATOSHI NAKAMOTO'S BIRTHDAY (APRIL 5TH)</div>
-    <div id="timer">00D : 00H : 00M : 00S</div>
+    <div id="timer">
+        <div id="days">00D</div> : <div id="hours">00H</div> : <div id="mins">00M</div> : <div id="secs">00S</div>
+    </div>
 </div>
 
 <div class="terminal-container" id="terminal">
     <div class="init-btn" onclick="activateProtocol()">[ > INITIALIZE P2P LEGEND NEURAL LINK < ]</div>
     
-    <h1 style="text-align: center; letter-spacing: 12px; margin-top: 0;">THE P2P LEGEND</h1>
+    <h1 style="text-align: center; letter-spacing: 15px; margin-top: 0; color: var(--neon-green);">THE P2P LEGEND</h1>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <span style="font-size:0.75em; opacity: 0.8;">MARKET CAP (USD)</span>
+            <span style="font-size:0.8em; opacity: 0.8; letter-spacing: 2px;">MARKET CAP (USD)</span>
             <span id="mcap-display" class="stat-value" style="color:var(--matrix-blue)">$0</span>
         </div>
         <div class="stat-card">
-            <span style="font-size:0.75em; opacity: 0.8;">ELIGIBLE HOLDERS</span>
+            <span style="font-size:0.8em; opacity: 0.8; letter-spacing: 2px;">ELIGIBLE HOLDERS</span>
             <span id="holder-display" class="stat-value">000</span>
         </div>
         <div class="stat-card">
-            <span style="font-size:0.75em; opacity: 0.8;">BTC REWARDS</span>
+            <span style="font-size:0.8em; opacity: 0.8; letter-spacing: 2px;">BTC REWARDS</span>
             <span id="reward-display" class="stat-value" style="color:var(--warning-gold)">0.000000</span>
             <span id="reward-usd" class="usd-val">≈ $0.00 USD</span>
         </div>
     </div>
 
     <div class="holder-section">
-        <h3 style="font-size:1em; border-left: 4px solid var(--neon-green); padding-left: 15px;">TOP 10 LEGENDARY HOLDERS</h3>
+        <div class="section-header">TOP 10 LEGENDARY HOLDERS</div>
         <table>
             <thead>
                 <tr>
@@ -125,13 +134,13 @@
                 </tr>
             </thead>
             <tbody id="holder-table">
-                <tr><td colspan="4">AWAITING CONNECTION...</td></tr>
+                <tr><td colspan="4" style="color:#888;">WAITING FOR NEURAL LINK...</td></tr>
             </tbody>
         </table>
     </div>
 
     <div class="links-container">
-        <a href="https://pump.fun/coin/95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump" target="_blank" class="p2p-link">LIVE ON PUMP.FUN</a>
+        <a href="https://pump.fun/coin/95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump" target="_blank" class="p2p-link">VIEW ON PUMP.FUN</a>
         <a href="https://x.com/i/communities/2038186875488522599" target="_blank" class="p2p-link">X COMMUNITY</a>
     </div>
 </div>
@@ -139,27 +148,37 @@
 <audio id="bgm" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg"></audio>
 
 <script>
-    const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev'; // Link Ngrok của bạn
+    // --- CẤU HÌNH API ---
+    const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev'; // DÁN LINK NGROK VÀO ĐÂY
     const TOKEN_MINT = '95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump';
-    let btcBaseValue = 0;
-    const BTC_PRICE_LIVE = 69420;
+    let btcLast = 0;
+    const BTC_PRICE = 68500; // Giá BTC ước tính để quy đổi USD
 
-    function runCountdown() {
+    // 1. Countdown Logic
+    function updateCountdown() {
         const target = new Date("April 5, 2026 00:00:00").getTime();
         const now = new Date().getTime();
         const gap = target - now;
+
         const d = Math.floor(gap / (1000 * 60 * 60 * 24));
         const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((gap % (1000 * 60)) / 1000);
-        document.getElementById('timer').innerText = `${d}D : ${h}H : ${m}M : ${s}S`;
-    }
-    setInterval(runCountdown, 1000);
 
+        document.getElementById('days').innerText = d.toString().padStart(2,'0') + "D";
+        document.getElementById('hours').innerText = h.toString().padStart(2,'0') + "H";
+        document.getElementById('mins').innerText = m.toString().padStart(2,'0') + "M";
+        document.getElementById('secs').innerText = s.toString().padStart(2,'0') + "S";
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // 2. Matrix Rain Background
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
     canvas.height = window.innerHeight; canvas.width = window.innerWidth;
-    const drops = new Array(Math.floor(canvas.width / 20)).fill(1);
+    const columns = Math.floor(canvas.width / 20);
+    const drops = new Array(columns).fill(1);
     function matrix() {
         ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#0F0"; ctx.font = "15px monospace";
@@ -170,34 +189,50 @@
     }
     setInterval(matrix, 50);
 
-    async function syncData() {
+    // 3. Sync Data Real-time
+    async function syncSystem() {
         try {
+            // Market Cap
             const dexRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
             const dexData = await dexRes.json();
-            if(dexData.pairs) document.getElementById('mcap-display').innerText = "$" + Math.round(dexData.pairs[0].fdv).toLocaleString();
+            if(dexData.pairs) {
+                document.getElementById('mcap-display').innerText = "$" + Math.round(dexData.pairs[0].fdv).toLocaleString();
+            }
 
+            // Bot Stats via Ngrok
             const botRes = await fetch(`${NGROK_API}/api/stats`);
             const data = await botRes.json();
 
-            if(data.totalBtcDistributed > btcBaseValue && btcBaseValue !== 0) {
+            // Shake Effect
+            if(data.totalBtcDistributed > btcLast && btcLast !== 0) {
                 document.getElementById('terminal').classList.add('shake-effect');
-                setTimeout(() => document.getElementById('terminal').classList.remove('shake-effect'), 600);
+                setTimeout(() => document.getElementById('terminal').classList.remove('shake-effect'), 500);
             }
-            btcBaseValue = data.totalBtcDistributed;
+            btcLast = data.totalBtcDistributed;
+
             document.getElementById('holder-display').innerText = data.totalHolders;
             document.getElementById('reward-display').innerText = data.totalBtcDistributed.toFixed(6);
-            document.getElementById('reward-usd').innerText = `≈ $${(data.totalBtcDistributed * BTC_PRICE_LIVE).toLocaleString()} USD`;
+            document.getElementById('reward-usd').innerText = `≈ $${(data.totalBtcDistributed * BTC_PRICE).toLocaleString()} USD`;
 
-            document.getElementById('holder-table').innerHTML = data.topHolders.slice(0, 10).map(h => `
-                <tr><td>${h.rank}</td><td style="color:var(--matrix-blue)">${h.wallet}</td><td>${h.balance}</td><td style="color:#fff">LEGENDARY</td></tr>
+            // Top 10 Holders List
+            const tbody = document.getElementById('holder-table');
+            tbody.innerHTML = data.topHolders.slice(0, 10).map(h => `
+                <tr>
+                    <td>${h.rank}</td>
+                    <td style="color:var(--matrix-blue)">${h.wallet}</td>
+                    <td>${Number(h.balance).toLocaleString()}</td>
+                    <td style="color:#fff; font-weight:bold;">LEGENDARY</td>
+                </tr>
             `).join('');
-        } catch (e) {}
+
+        } catch (e) { console.log("Searching for Signal..."); }
     }
 
     function activateProtocol() {
         document.getElementById('bgm').play();
         document.querySelector('.init-btn').style.display = 'none';
-        syncData(); setInterval(syncData, 12000);
+        syncSystem();
+        setInterval(syncSystem, 10000);
     }
 </script>
 </body>
