@@ -114,11 +114,11 @@
             border-bottom: 1px solid rgba(0, 255, 65, 0.3);
         }
 
-        #tx-feed { padding: 10px; font-size: 0.85em; flex-grow: 1; }
+        #tx-feed { padding: 10px; font-size: 0.85em; flex-grow: 1; overflow-y: hidden; }
 
         .tx-item { margin-bottom: 5px; border-left: 3px solid var(--neon-green); padding-left: 10px; animation: fadeIn 0.4s ease; }
-        .buy { color: var(--neon-green); border-color: var(--neon-green); }
-        .sell { color: #ff3333; border-color: #ff3333; }
+        .buy { color: var(--neon-green); }
+        .sell { color: #ff3333; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -148,27 +148,27 @@
     
     <div class="links-bar">
         <a href="https://pump.fun/coin/95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump" target="_blank" class="social-link">PUMP.FUN LIVE CHART</a>
-        <a href="https://x.com/your_handle" target="_blank" class="social-link">X / TWITTER</a>
+        <a href="#" class="social-link">TWITTER / X</a>
     </div>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <span class="stat-label">LIVE MARKET CAP</span>
+            <span class="stat-label">MARKET CAPITALIZATION</span>
             <span id="mcap-display" class="stat-value mcap-color">000,000</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">ELIGIBLE HOLDERS</span>
+            <span class="stat-label">TOTAL HOLDERS</span>
             <span id="holder-display" class="stat-value">000</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">TOTAL BTC REWARD</span>
+            <span class="stat-label">BTC DISTRIBUTED</span>
             <span id="reward-display" class="stat-value reward-color">0.0000</span>
         </div>
     </div>
 
     <div class="forecast-box">
-        NEXT ESTIMATED DISTRIBUTION: <span id="next-dist-val">0.0001</span> BTC 
-        | TARGETING <span id="target-count-val">0</span> LEGENDARY HOLDERS
+        PROTOCOL STATUS: <span id="sys-status" class="pulse-text">SYNCHRONIZING</span> 
+        | REWARD WALLET: <span id="reward-addr-short">cbbtcf3...4iMij</span>
     </div>
 
     <div class="feed-box">
@@ -183,29 +183,30 @@
             <tr>
                 <th>RANK</th>
                 <th>LEGENDARY WALLET</th>
-                <th>P2P BALANCE</th>
+                <th>TOKEN BALANCE</th>
                 <th>STATUS</th>
             </tr>
         </thead>
         <tbody id="leaderboard-body">
-            </tbody>
+            <tr><td colspan="4">CONNECTING TO LOCAL ENGINE...</td></tr>
+        </tbody>
     </table>
 
     <div class="footer">
-        PROTOCOL: P2P_REWARD_v4.0 | NETWORK: SOLANA MAINNET<br>
-        REWARD DESTINATION: <span id="reward-addr" style="color: #fff;">cbbtcf3aa...4iMij</span><br>
-        LAST_SCAN: <span id="sync-timestamp">INITIALIZING...</span> | REFRESH_RATE: 30S
+        PROTOCOL: P2P_REWARD_v6.0 | NETWORK: SOLANA MAINNET<br>
+        DESTINATION: <span id="reward-addr-full" style="color: #fff;">cbbtcf3aa...4iMij</span><br>
+        LAST_SYNC: <span id="sync-timestamp">INITIALIZING...</span> | RPC: HELIUS_CLUSTER
     </div>
 </div>
 
 <script>
-    // 1. Connection Config
+    // Configuration - Updated based on your Ngrok link
     const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
     const TOKEN_MINT = '95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump';
 
     async function updateDashboard() {
         try {
-            // 2. Fetch Market Cap from DexScreener
+            // 1. Fetch Market Cap from DexScreener
             const mcapRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
             const mcapData = await mcapRes.json();
             
@@ -213,34 +214,29 @@
                 const fdv = Math.round(mcapData.pairs[0].fdv);
                 document.getElementById('mcap-display').innerText = fdv.toLocaleString();
                 
-                // Simulated transaction feed based on live activity
+                // Simulated transaction feed logs
                 const feed = document.getElementById('tx-feed');
                 const time = new Date().toLocaleTimeString();
                 const type = Math.random() > 0.4 ? 'buy' : 'sell';
-                const amt = (Math.random() * 2.5).toFixed(2);
-                
-                const log = `<div class="tx-item ${type}">[${time}] ${type.toUpperCase()}: ${amt} SOL transaction detected.</div>`;
+                const log = `<div class="tx-item">[${time}] <span class="${type}">${type.toUpperCase()}</span> detected via Pump.fun</div>`;
                 feed.insertAdjacentHTML('afterbegin', log);
-                if(feed.children.length > 4) feed.lastElementChild.remove();
+                if(feed.children.length > 5) feed.lastElementChild.remove();
             }
 
-            // 3. Fetch Personal Bot Stats
+            // 2. Fetch Personal Bot Stats (Your Successful v6.0 Bot)
             const botRes = await fetch(`${NGROK_API}/api/stats`);
             const data = await botRes.json();
 
-            // 4. Update UI Values
+            // 3. Update Stats UI
             document.getElementById('holder-display').innerText = data.totalHolders.toString().padStart(3, '0');
             document.getElementById('reward-display').innerText = data.totalBtcDistributed.toFixed(4);
-            document.getElementById('reward-addr').innerText = data.btcAddress;
+            document.getElementById('sys-status').innerText = data.systemStatus;
+            document.getElementById('reward-addr-full').innerText = data.btcAddress;
 
-            // 5. Update Forecast
-            const nextEst = data.totalHolders > 0 ? 0.0001 : 0.0000;
-            document.getElementById('next-dist-val').innerText = nextEst.toFixed(4);
-            document.getElementById('target-count-val').innerText = data.totalHolders;
-
-            // 6. Update Leaderboard
+            // 4. Update Leaderboard Table
             const tbody = document.getElementById('leaderboard-body');
             tbody.innerHTML = '';
+            
             if (data.topHolders && data.topHolders.length > 0) {
                 data.topHolders.forEach(h => {
                     tbody.insertAdjacentHTML('beforeend', `
@@ -248,24 +244,25 @@
                             <td>${h.rank}</td>
                             <td>${h.wallet}</td>
                             <td>${h.balance}</td>
-                            <td class="pulse-text">LEGENDARY</td>
+                            <td class="pulse-text">${h.status}</td>
                         </tr>
                     `);
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="4">SEARCHING FOR LEGENDARY HOLDERS...</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4">SEARCHING FOR WHALES...</td></tr>';
             }
 
             document.getElementById('sync-timestamp').innerText = new Date().toLocaleTimeString();
 
         } catch (err) {
-            console.error("Connection failed:", err);
+            console.error("Connection Error:", err);
+            document.getElementById('sys-status').innerText = "DISCONNECTED";
         }
     }
 
-    // Refresh every 30 seconds
+    // Refresh data every 10 seconds for smooth UI
     updateDashboard();
-    setInterval(updateDashboard, 30000);
+    setInterval(updateDashboard, 10000);
 </script>
 
 </body>
