@@ -3,62 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE P2P LEGEND - Daily UTC Reset</title>
+    <title>THE P2P LEGEND - Satoshi Birthday Protocol</title>
     <style>
         body { 
             background: #000; color: #00ff41; 
             font-family: 'Courier New', Courier, monospace; 
             margin: 0; padding: 0; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            overflow-x: hidden; position: relative;
+            overflow: hidden; position: relative;
         }
         
-        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.15; }
+        .terminal-header { font-size: 2.8rem; letter-spacing: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 25px; text-shadow: 0 0 15px #00ff41; }
 
-        .terminal-header { font-size: 2.5rem; letter-spacing: 10px; font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
-
-        /* Protocol Information Box */
         .protocol-frame { 
-            border: 2px solid #00ff41; padding: 25px; width: 680px; 
-            box-shadow: 0 0 15px #00ff41; position: relative; margin-bottom: 30px;
-            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff41; padding: 30px; width: 720px; 
+            box-shadow: 0 0 15px #00ff41; position: relative; margin-bottom: 35px;
+            background: rgba(0, 0, 0, 0.9);
         }
-        .protocol-title { text-transform: uppercase; font-size: 1.1rem; margin-bottom: 20px; text-decoration: underline; color: #00ff41; }
+        .protocol-title { text-transform: uppercase; font-size: 1.2rem; margin-bottom: 25px; text-decoration: underline; color: #00ff41; font-weight: bold; }
         
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; text-align: left; }
-        .data-label { font-size: 0.9rem; text-transform: uppercase; font-weight: bold; }
-        .data-value { color: #fff; font-weight: bold; }
+        .data-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px 50px; text-align: left; }
+        .data-label { font-size: 0.95rem; text-transform: uppercase; font-weight: bold; color: #00ff41; }
+        .data-value { color: #fff; font-weight: bold; font-size: 1rem; }
         
-        /* Console Output Logs */
-        .console-logs { border-top: 1px solid #00ff41; margin-top: 25px; padding-top: 15px; font-size: 0.8rem; text-align: left; opacity: 0.8; }
-        .log-entry { margin-bottom: 5px; font-family: 'Courier New', monospace; }
+        .console-logs { border-top: 1px solid #00ff41; margin-top: 30px; padding-top: 20px; font-size: 0.85rem; text-align: left; opacity: 0.8; }
+        .log-entry { margin-bottom: 6px; font-family: 'Courier New', monospace; color: #00ff41; }
 
-        /* Main Countdown Section (Daily UTC Reset) */
-        .countdown-header { font-size: 1.8rem; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 3px; }
         .countdown-frame { 
-            border: 2px solid #00ff41; padding: 20px 40px; width: 680px;
-            box-shadow: 0 0 15px #00ff41; display: flex; justify-content: center; align-items: center; margin-bottom: 30px;
-            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid #00ff41; padding: 25px 50px; width: 720px;
+            box-shadow: 0 0 15px #00ff41; display: flex; justify-content: center; align-items: center; margin-bottom: 35px;
+            background: rgba(0, 0, 0, 0.9);
         }
-        .timer-display { font-size: 3.5rem; color: #fff; font-weight: bold; text-shadow: 0 0 10px #00ff41; }
+        .timer-display { font-size: 3.8rem; color: #fff; font-weight: bold; text-shadow: 0 0 15px #00ff41; letter-spacing: 2px; }
 
-        /* Action Buttons */
-        .action-area { display: flex; gap: 30px; margin-top: 20px; }
+        .action-area { display: flex; gap: 35px; margin-top: 25px; }
         .matrix-btn { 
-            border: 1px solid #00ff41; padding: 10px 25px; 
+            border: 1px solid #00ff41; padding: 12px 30px; 
             color: #00ff41; background: transparent; text-transform: uppercase; 
-            font-family: 'Courier New', monospace; font-size: 0.9rem; font-weight: bold;
+            font-family: 'Courier New', monospace; font-size: 1rem; font-weight: bold;
             cursor: pointer; text-decoration: none; display: inline-block;
             transition: all 0.3s ease;
         }
-        .matrix-btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 15px #00ff41; }
+        .matrix-btn:hover { background: rgba(0, 255, 65, 0.2); box-shadow: 0 0 15px #00ff41; }
+        .btn-white { border-color: #fff; color: #fff; }
+        .btn-white:hover { background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 15px #fff; }
 
-        .audio-status { position: fixed; bottom: 10px; right: 10px; font-size: 0.8rem; cursor: pointer; border: 1px solid #00ff41; padding: 3px 8px; opacity: 0.6; }
+        .audio-toggle { position: fixed; bottom: 15px; right: 15px; font-size: 0.85rem; cursor: pointer; border: 1px solid #00ff41; padding: 4px 10px; opacity: 0.7; color: #00ff41; font-weight: bold; text-transform: uppercase; }
     </style>
 </head>
 <body>
-
-    <canvas id="matrix-canvas"></canvas>
 
     <div class="terminal-header">THE P2P LEGEND</div>
 
@@ -66,43 +59,84 @@
         <div class="protocol-title">> BTC REWARD PROTOCOL (80/20)</div>
         <div class="data-grid">
             <div class="data-label">MIN HOLD:</div><div class="data-value">> 1,000,000 $P2P</div>
-            <div class="data-label">ELIGIBLE:</div><div class="data-value"><span id="eligible-wallets">0</span> WALLETS</div>
-            <div class="data-label">TOTAL REWARDED:</div><div class="data-value"><span id="total-rewarded">0.000000</span> cbBTC</div>
-            <div class="data-label">NEXT SCAN:</div><div class="data-value" style="color: #f1c40f;"><span id="next-airdrop">15:00</span></div>
+            <div class="data-label">ELIGIBLE WALLETS:</div><div class="data-value"><span id="eligible-wallets">0</span> WALLETS</div>
+            <div class="data-label">TOTAL REWARDED:</div><div class="data-value">0.0452 cbBTC</div>
+            <div class="data-label">NEXT SWAP/SCAN (15min):</div><div class="data-value" style="color: #f1c40f;"><span id="next-swap">15:00</span></div>
         </div>
         
         <div class="console-logs">
             <div class="log-entry">[SYSTEM]: SECURE NODE ONLINE...</div>
             <div class="log-entry">[BOT]: MONITORING LIQUIDITY ON PUMP.FUN...</div>
-            <div class="log-entry" style="color: #555">LAST SYNC: <span id="sync-timestamp">-</span></div>
         </div>
     </div>
 
-    <div class="countdown-header">> NEXT DAILY CYCLE (UTC 00:00) <</div>
+    <div class="protocol-title">> SATOSHI BIRTHDAY COUNTDOWN <</div>
     <div class="countdown-frame">
-        <div class="timer-display" id="daily-timer">00h : 00m : 00s</div>
+        <div class="timer-display" id="satoshi-timer">00d : 00h : 00m : 00s</div>
     </div>
 
     <div class="action-area">
         <a href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="matrix-btn">BUY $P2P</a>
-        <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="matrix-btn">X COMMUNITY</a>
+        <a href="https://x.com/i/communities/2038186875488522599" target="_blank" rel="noopener noreferrer" class="matrix-btn btn-white">X COMMUNITY</a>
     </div>
 
-    <div class="audio-status">FX: ON</div>
+    <div class="audio-toggle">ON</div>
 
     <script>
-        const NGROK_REMOTE_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
-        let airdropSeconds = 15 * 60; 
+        const NGROK_API_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
+        const P2P_LAUNCH_DATE = new Date("April 5, 2026 00:00:00").getTime(); 
 
-        // 1. FETCH LIVE DATA FROM BOT
-        async function updateLiveStats() {
+        let swapSecondsLeft = 15 * 60; 
+
+        async function fetchBotStats() {
             try {
-                const response = await fetch(`${NGROK_REMOTE_URL}/api/stats?cache_burst=${Date.now()}`);
+                const response = await fetch(`${NGROK_API_URL}/api/stats?burst=${Date.now()}`);
                 const data = await response.json();
-                
                 document.getElementById('eligible-wallets').innerText = data.totalHolders || 0;
-                document.getElementById('total-rewarded').innerText = (data.totalBtcDistributed || 0).toFixed(6);
-                document.getElementById('sync-timestamp').innerText = data.lastUpdate;
-                
-                airdropSeconds = 15 * 60; 
+                swapSecondsLeft = 15 * 60; 
             } catch (err) {
+                console.error("Link Lost");
+            }
+        }
+
+        function runSwapTimer() {
+            setInterval(() => {
+                if (swapSecondsLeft > 0) {
+                    swapSecondsLeft--;
+                    const m = Math.floor(swapSecondsLeft / 60);
+                    const s = swapSecondsLeft % 60;
+                    document.getElementById('next-swap').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function runMainCountdown() {
+            setInterval(() => {
+                const now = new Date();
+                const distToApril5 = P2P_LAUNCH_DATE - now.getTime();
+                
+                if (distToApril5 > 0) {
+                    const days = Math.floor(distToApril5 / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distToApril5 % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const mins = Math.floor((distToApril5 % (1000 * 60 * 60)) / (1000 * 60));
+                    const secs = Math.floor((distToApril5 % (1000 * 60)) / 1000);
+                    document.getElementById('satoshi-timer').innerText = `${days}d : ${hours}h : ${mins.toString().padStart(2, '0')}m : ${secs.toString().padStart(2, '0')}s`;
+                } else {
+                    document.querySelectorAll('.protocol-title')[1].innerText = "> NEXT DAILY CYCLE (UTC 00:00) <";
+                    const nextUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+                    const distToUtc = nextUtc - now.getTime();
+                    const utcHours = Math.floor((distToUtc / (1000 * 60 * 60)) % 24);
+                    const utcMins = Math.floor((distToUtc / (1000 * 60)) % 60);
+                    const utcSecs = Math.floor((distToUtc / 1000) % 60);
+                    document.getElementById('satoshi-timer').innerText = `0d : ${utcHours.toString().padStart(2, '0')}h : ${utcMins.toString().padStart(2, '0')}m : ${utcSecs.toString().padStart(2, '0')}s`;
+                }
+            }, 1000);
+        }
+
+        runMainCountdown();
+        runSwapTimer();
+        setInterval(fetchBotStats, 10000);
+        fetchBotStats();
+    </script>
+</body>
+</html>
