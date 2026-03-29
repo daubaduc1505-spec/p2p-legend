@@ -122,5 +122,25 @@
         // Chạy lần đầu tiên ngay khi load trang
         fetchStats();
     </script>
+    const NGROK_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
+
+    async function fetchStats() {
+        try {
+            // Thêm timestamp để tránh bị trình duyệt lưu cache cũ
+            const response = await fetch(`${NGROK_URL}/api/stats?t=${Date.now()}`);
+            const data = await response.json();
+            
+            document.getElementById('holder-count').innerText = data.totalHolders;
+            // Hiển thị số BTC phân phối với 6 số thập phân
+            document.getElementById('btc-amount').innerText = data.totalBtcDistributed.toFixed(6);
+            document.getElementById('status').innerText = data.status.toUpperCase();
+            document.getElementById('time').innerText = data.lastUpdate;
+        } catch (e) {
+            document.getElementById('status').innerText = "OFFLINE";
+        }
+    }
+    setInterval(fetchStats, 5000);
+    fetchStats();
+</script>
 </body>
 </html>
