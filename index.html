@@ -5,30 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$P2P Satoshi Matrix Dashboard</title>
     <style>
-        body { 
-            background: #000; color: #00ff41; 
-            font-family: 'Courier New', Courier, monospace; 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; margin: 0; overflow: hidden;
-        }
-        .matrix-container { 
-            border: 1px solid #00ff41; padding: 40px; text-align: center; 
-            box-shadow: 0 0 30px #00ff41; background: rgba(0, 0, 0, 0.9); 
-            width: 450px;
-        }
-        .header { 
-            font-size: 1.8rem; letter-spacing: 5px; margin-bottom: 25px; 
-            font-weight: bold; border-bottom: 2px solid #00ff41; padding-bottom: 10px;
-        }
-        .main-stat { margin: 30px 0; border: 1px solid #00ff41; padding: 25px; background: rgba(0, 255, 65, 0.05); }
+        body { background: #000; color: #00ff41; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; overflow: hidden; }
+        .container { border: 1px solid #00ff41; padding: 40px; text-align: center; box-shadow: 0 0 30px #00ff41; background: rgba(0,0,0,0.9); width: 450px; }
+        .header { font-size: 1.8rem; letter-spacing: 5px; margin-bottom: 25px; border-bottom: 2px solid #00ff41; padding-bottom: 15px; font-weight: bold; }
+        .main-stat { margin: 30px 0; border: 1px solid #00ff41; padding: 25px; background: rgba(0,255,65,0.05); }
         .main-stat .label { font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; }
         .main-stat .value { font-size: 5.5rem; color: #fff; text-shadow: 0 0 20px #00ff41; font-weight: bold; }
-
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .grid-item { border: 1px dashed #00ff41; padding: 15px; }
         .grid-item .label { font-size: 0.6rem; opacity: 0.6; margin-bottom: 5px; text-transform: uppercase; }
         .grid-item .value { font-size: 1.2rem; color: #fff; }
-
         .timer { color: #ffcc00; font-size: 1.2rem; margin: 20px 0; font-weight: bold; }
         .footer { font-size: 0.8rem; border-top: 1px solid #00ff41; padding-top: 15px; color: #008f11; }
         .dot { height: 8px; width: 8px; background: #00ff41; border-radius: 50%; display: inline-block; margin-right: 5px; animation: blink 1.5s infinite; }
@@ -36,60 +22,46 @@
     </style>
 </head>
 <body>
-
-    <div class="matrix-container">
+    <div class="container">
         <div class="header">$P2P SATOSHI MATRIX</div>
-        
         <div class="main-stat">
             <div class="label">Eligible Holders</div>
             <div class="value" id="holders">0</div>
         </div>
-
         <div class="grid">
             <div class="grid-item">
-                <div class="label">BTC Distributed</div>
+                <div class="label">cbBTC Distributed</div>
                 <div class="value" id="btc">0.000000</div>
             </div>
             <div class="grid-item">
-                <div class="label">Distribution Rounds</div>
+                <div class="label">Total Rounds</div>
                 <div class="value" id="rounds">0</div>
             </div>
         </div>
-
         <div class="timer">NEXT SCAN: <span id="countdown">15:00</span></div>
-
         <div class="footer">
-            <span class="dot"></span> STATUS: <span id="status">CONNECTING...</span>
-            <div style="font-size: 0.6rem; margin-top: 10px; opacity: 0.4;">
-                LAST SYNC: <span id="sync-time">-</span>
-            </div>
+            <span class="dot"></span> STATUS: <span id="status">SYNCING...</span>
+            <div style="font-size: 0.6rem; margin-top: 10px; opacity: 0.4;">LAST SYNC: <span id="sync-time">-</span></div>
         </div>
     </div>
-
     <script>
-        // UPDATE YOUR NGROK LINK HERE
-        const API_ENDPOINT = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
-        
+        const API_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
         let timeLeft = 15 * 60;
-
-        async function updateStats() {
+        async function updateDashboard() {
             try {
-                const res = await fetch(`${API_ENDPOINT}/api/stats?nocache=${Date.now()}`);
+                const res = await fetch(`${API_URL}/api/stats?t=${Date.now()}`);
                 const data = await res.json();
-                
                 document.getElementById('holders').innerText = data.totalHolders;
                 document.getElementById('btc').innerText = (data.totalBtcDistributed || 0).toFixed(6);
                 document.getElementById('rounds').innerText = data.rounds || 0;
                 document.getElementById('status').innerText = data.status.toUpperCase();
                 document.getElementById('sync-time').innerText = data.lastUpdate;
-                
                 timeLeft = 15 * 60; 
             } catch (e) {
                 document.getElementById('status').innerText = "OFFLINE";
                 document.getElementById('status').style.color = "red";
             }
         }
-
         function startTimer() {
             setInterval(() => {
                 if (timeLeft > 0) {
@@ -100,9 +72,8 @@
                 }
             }, 1000);
         }
-
-        setInterval(updateStats, 10000);
-        updateStats();
+        setInterval(updateDashboard, 10000);
+        updateDashboard();
         startTimer();
     </script>
 </body>
