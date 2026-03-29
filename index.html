@@ -3,247 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATOSHI LEGACY | $P2P Protocol</title>
+    <title>$P2P Satoshi Matrix Dashboard</title>
     <style>
-        :root {
-            --matrix-green: #00ff41;
-            --matrix-glow: rgba(0, 255, 65, 0.5);
-            --gold: #ffcc00;
-            --alert-red: #ff003c;
-            --panel-bg: rgba(0, 20, 0, 0.95);
+        body { 
+            background: #050505; 
+            color: #00ff41; 
+            font-family: 'Courier New', Courier, monospace; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden;
         }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: black; overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            color: #efefef;
+        .matrix-card { 
+            border: 1px solid #00ff41; 
+            padding: 50px; 
+            text-align: center; 
+            box-shadow: 0 0 20px #00ff41; 
+            background: rgba(0, 0, 0, 0.9); 
+            min-width: 380px;
+            position: relative;
         }
-
-        /* Background Layer */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('satoshi_background.jpg'); 
-            background-size: cover; background-position: center;
-            opacity: 0.15; z-index: 0; pointer-events: none;
-            filter: grayscale(100%) brightness(1.2);
+        .glitch-text { 
+            font-size: 1.8rem; 
+            letter-spacing: 4px; 
+            margin-bottom: 20px; 
+            text-transform: uppercase;
+            font-weight: bold;
         }
-
-        #matrix { position: fixed; top: 0; left: 0; z-index: 1; }
-
-        .content {
-            position: relative; z-index: 10;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            height: 100vh; text-align: center;
-            background: rgba(0, 0, 0, 0.75);
-            padding: 20px; box-sizing: border-box;
+        .counter-container {
+            margin: 30px 0;
         }
-
-        /* 10s Alert Animations */
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            80% { transform: translate(-1px, -1px) rotate(1deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        .label {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            opacity: 0.8;
         }
-
-        @keyframes flash-bg {
-            from { background-color: rgba(255, 0, 60, 0.2); }
-            to { background-color: transparent; }
+        .counter { 
+            font-size: 6rem; 
+            margin: 10px 0; 
+            color: #fff; 
+            text-shadow: 0 0 25px #00ff41; 
         }
-
-        .alert-active { animation: shake 0.2s infinite; }
-        .flash-active { animation: flash-bg 0.15s infinite alternate; }
-
-        .glitch-title {
-            font-size: 2.8rem; font-weight: bold;
-            color: var(--matrix-green); text-shadow: 0 0 15px var(--matrix-green);
-            letter-spacing: 12px; margin-bottom: 8px; text-transform: uppercase;
+        .status-box { 
+            font-size: 1rem; 
+            color: #008f11; 
+            border-top: 1px solid #00ff41;
+            padding-top: 20px;
+            margin-top: 20px;
         }
-
-        .panel {
-            background: var(--panel-bg); border: 2px solid var(--matrix-green);
-            box-shadow: 0 0 20px var(--matrix-glow); padding: 22px; border-radius: 10px;
-            width: 95%; max-width: 650px; margin: 10px 0;
+        .dot { 
+            height: 10px; 
+            width: 10px; 
+            background: #00ff41; 
+            border-radius: 50%; 
+            display: inline-block; 
+            margin-right: 8px;
+            animation: pulse 1.5s infinite; 
         }
-
-        .panel-header { color: var(--gold); font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; font-size: 0.9rem; }
-        
-        .dist-timer { color: var(--matrix-green); font-size: 1.4rem; font-weight: bold; }
-        .dist-timer.warning { color: var(--alert-red); text-shadow: 0 0 15px var(--alert-red); }
-
-        .live-logs { height: 70px; overflow-y: auto; margin-top: 10px; font-size: 0.75rem; color: #888; text-align: left; border-top: 1px solid #333; padding-top: 10px; }
-        .success { color: var(--matrix-green); }
-
-        /* 3X BIGGER COUNTDOWN */
-        .countdown-label {
-            margin-top: 25px; font-size: 2.4rem; font-weight: 900;
-            color: var(--matrix-green); text-shadow: 0 0 20px var(--matrix-green);
-            letter-spacing: 4px; text-transform: uppercase;
+        .sync-time {
+            margin-top: 15px; 
+            font-size: 0.7rem; 
+            opacity: 0.5;
         }
-
-        .countdown-main { 
-            font-size: 4.5rem; color: var(--matrix-green); 
-            border: 3px solid var(--matrix-green); padding: 20px 40px; 
-            border-radius: 15px; margin: 10px 0; background: rgba(0,0,0,0.6);
-            font-weight: bold; text-shadow: 0 0 30px var(--matrix-glow);
-        }
-
-        .btn-container { display: flex; gap: 15px; margin-top: 20px; }
-        .btn { padding: 15px 30px; font-size: 1.1rem; color: var(--matrix-green); border: 2px solid var(--matrix-green); text-decoration: none; border-radius: 5px; text-transform: uppercase; font-weight: bold; transition: 0.3s; }
-        .btn:hover { background: var(--matrix-green); color: black; box-shadow: 0 0 20px var(--matrix-green); }
-
-        #music-btn { position: fixed; bottom: 20px; right: 20px; z-index: 100; background: rgba(0,0,0,0.8); border: 1px solid var(--matrix-green); color: var(--matrix-green); cursor: pointer; padding: 10px 15px; font-family: monospace; }
-        
-        @media (max-width: 768px) {
-            .countdown-label { font-size: 1.2rem; }
-            .countdown-main { font-size: 2rem; padding: 10px 20px; }
-            .glitch-title { font-size: 1.8rem; letter-spacing: 5px; }
+        @keyframes pulse { 
+            0% { opacity: 1; transform: scale(1); } 
+            50% { opacity: 0.2; transform: scale(1.2); } 
+            100% { opacity: 1; transform: scale(1); } 
         }
     </style>
 </head>
-<body id="body-bg">
+<body>
 
-<canvas id="matrix"></canvas>
-
-<audio id="bg-music" loop preload="auto">
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-
-<button onclick="toggleMusic()" id="music-btn">🔇 MUTED</button>
-
-<div class="content" id="main-content">
-    <div class="glitch-title">THE P2P LEGEND</div>
-
-    <div class="panel">
-        <div class="panel-header">> BTC REWARD PROTOCOL (80/20)</div>
-        <div class="stats-grid">
-            <div>MIN HOLD: <br><span>> 1,000,000 $P2P</span></div>
-            <div>ELIGIBLE: <br><span>128 WALLETS</span></div>
-            <div>TOTAL REWARDED: <br><span class="success">0.0452 BTC</span></div>
-            <div>NEXT AIRDROP: <br><span class="dist-timer" id="dist-timer">15:00</span></div>
+    <div class="matrix-card">
+        <div class="glitch-text">$P2P SATOSHI MATRIX</div>
+        
+        <div class="counter-container">
+            <div class="label">ELIGIBLE HOLDERS</div>
+            <div class="counter" id="holder-count">0</div>
         </div>
-        <div class="live-logs" id="bot-logs">
-            <div class="success">[SYSTEM]: SECURE NODE ONLINE...</div>
-            <div>[BOT]: Monitoring liquidity on Pump.fun...</div>
+
+        <div class="status-box">
+            <span class="dot"></span> SYSTEM STATUS: <span id="status">CONNECTING...</span>
+        </div>
+        
+        <div class="sync-time">
+            LAST BLOCK SYNC: <span id="time">-</span>
         </div>
     </div>
 
-    <p class="countdown-label">> SATOSHI BIRTHDAY COUNTDOWN <</p>
-    <div class="countdown-main" id="timer">00d : 00h : 00m : 00s</div>
+    <script>
+        // LINK NGROK CỦA BẠN ĐÃ ĐƯỢC CẬP NHẬT TẠI ĐÂY
+        const NGROK_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
 
-    <div class="btn-container">
-        <a href="https://pump.fun/coin/95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump" class="btn">BUY $P2P</a>
-        <a href="https://x.com/i/communities/2038186875488522599/" class="btn" style="border-color: white; color: white;">X COMMUNITY</a>
-    </div>
-</div>
-    <div style="padding: 20px; background: #1a1a1a; color: gold; border-radius: 10px; text-align: center;">
-    <h3>HỆ THỐNG PHÂN PHỐI BTC</h3>
-    <p>Số người đủ điều kiện nhận thưởng: <strong id="holder-count" style="font-size: 24px;">Đang tải...</strong></p>
-    <small>Cập nhật cuối: <span id="last-update">-</span></small>
-</div>
-
-<script>
-    async function updateWebStats() {
-        try {
-            // Nếu chạy trên máy tính cá nhân, dùng localhost. 
-            // Nếu treo Bot trên VPS, hãy thay localhost bằng IP của VPS.
-            const res = await fetch('http://localhost:3000/api/stats');
-            const data = await res.json();
-            document.getElementById('holder-count').innerText = data.totalHolders;
-            document.getElementById('last-update').innerText = data.lastUpdate;
-        } catch (e) {
-            document.getElementById('holder-count').innerText = "Bot Offline";
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${NGROK_URL}/api/stats`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                
+                // Cập nhật giao diện
+                document.getElementById('holder-count').innerText = data.totalHolders;
+                document.getElementById('status').innerText = data.status.toUpperCase();
+                document.getElementById('time').innerText = data.lastUpdate;
+                document.getElementById('status').style.color = "#00ff41";
+            } catch (e) {
+                console.error("Fetch error:", e);
+                document.getElementById('status').innerText = "SYSTEM OFFLINE";
+                document.getElementById('status').style.color = "#ff0000";
+            }
         }
-    }
-    setInterval(updateWebStats, 5000); // Cập nhật trên web mỗi 5 giây
-    updateWebStats();
-</script>
 
-<script>
-    // 1. Matrix Rain
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const chars = "01"; const fontSize = 16; const columns = canvas.width / fontSize;
-    const drops = []; for (let i = 0; i < columns; i++) drops[i] = 1;
-    function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#00ff41"; ctx.font = fontSize + "px monospace";
-        for (let i = 0; i < drops.length; i++) {
-            const text = chars[Math.floor(Math.random()*chars.length)];
-            ctx.fillText(text, i*fontSize, drops[i]*fontSize);
-            if (drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        }
-    }
-    setInterval(draw, 50);
-
-    // 2. Music Controller
-    const bgMusic = document.getElementById('bg-music');
-    const musicBtn = document.getElementById('music-btn');
-    let isPlaying = false;
-
-    function toggleMusic() {
-        if (!isPlaying) {
-            bgMusic.play().then(() => {
-                musicBtn.innerText = '🔊 ON';
-                isPlaying = true;
-            }).catch(e => console.log("Audio Blocked"));
-        } else {
-            bgMusic.pause();
-            musicBtn.innerText = '🔇 MUTED';
-            isPlaying = false;
-        }
-    }
-    // Activate on first click
-    document.addEventListener('click', () => { if(!isPlaying) toggleMusic(); }, { once: true });
-
-    // 3. 15-Min Timer & 10s Effects
-    let timeLeft = 15 * 60;
-    const distTimer = document.getElementById('dist-timer');
-    const mainContent = document.getElementById('main-content');
-    const bodyBg = document.getElementById('body-bg');
-
-    setInterval(() => {
-        let mins = Math.floor(timeLeft / 60);
-        let secs = timeLeft % 60;
-        distTimer.innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-
-        if (timeLeft <= 10 && timeLeft > 0) {
-            distTimer.classList.add('warning');
-            mainContent.classList.add('alert-active');
-            bodyBg.classList.add('flash-active');
-            if(isPlaying) bgMusic.volume = 1.0;
-        } 
-        else if (timeLeft === 0) {
-            distTimer.classList.remove('warning');
-            mainContent.classList.remove('alert-active');
-            bodyBg.classList.remove('flash-active');
-            document.getElementById('bot-logs').innerHTML += "<div class='success'>[ALERT]: BTC AIRDROP DISPATCHED!</div>";
-            timeLeft = 15 * 60;
-            if(isPlaying) bgMusic.volume = 0.6;
-        }
-        timeLeft--;
-    }, 1000);
-
-    // 4. Main Satoshi Countdown
-    const target = new Date("April 5, 2026 00:00:00 UTC").getTime();
-    setInterval(() => {
-        const now = new Date().getTime();
-        const diff = target - now;
-        const d = Math.floor(diff / 86400000);
-        const h = Math.floor((diff % 86400000) / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        document.getElementById('timer').innerText = `${d}d : ${h}h : ${m}m : ${s}s`;
-    }, 1000);
-</script>
+        // Tự động cập nhật mỗi 5 giây
+        setInterval(fetchStats, 5000); 
+        
+        // Chạy lần đầu tiên ngay khi load trang
+        fetchStats();
+    </script>
 </body>
 </html>
