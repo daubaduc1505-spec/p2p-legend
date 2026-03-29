@@ -53,4 +53,56 @@
         }
         .matrix-btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 15px #00ff41; }
 
-        .audio-status { position
+        .audio-status { position: fixed; bottom: 10px; right: 10px; font-size: 0.8rem; cursor: pointer; border: 1px solid #00ff41; padding: 3px 8px; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <div class="terminal-header">THE P2P LEGEND</div>
+
+    <div class="protocol-frame">
+        <div class="protocol-title">> BTC REWARD PROTOCOL (80/20)</div>
+        <div class="data-grid">
+            <div class="data-label">MIN HOLD:</div><div class="data-value">> 1,000,000 $P2P</div>
+            <div class="data-label">ELIGIBLE:</div><div class="data-value"><span id="eligible-wallets">0</span> WALLETS</div>
+            <div class="data-label">TOTAL REWARDED:</div><div class="data-value"><span id="total-rewarded">0.000000</span> cbBTC</div>
+            <div class="data-label">NEXT SCAN:</div><div class="data-value" style="color: #f1c40f;"><span id="next-airdrop">15:00</span></div>
+        </div>
+        
+        <div class="console-logs">
+            <div class="log-entry">[SYSTEM]: SECURE NODE ONLINE...</div>
+            <div class="log-entry">[BOT]: MONITORING LIQUIDITY ON PUMP.FUN...</div>
+            <div class="log-entry" style="color: #555">LAST SYNC: <span id="sync-timestamp">-</span></div>
+        </div>
+    </div>
+
+    <div class="countdown-header">> NEXT DAILY CYCLE (UTC 00:00) <</div>
+    <div class="countdown-frame">
+        <div class="timer-display" id="daily-timer">00h : 00m : 00s</div>
+    </div>
+
+    <div class="action-area">
+        <a href="https://pump.fun" target="_blank" rel="noopener noreferrer" class="matrix-btn">BUY $P2P</a>
+        <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="matrix-btn">X COMMUNITY</a>
+    </div>
+
+    <div class="audio-status">FX: ON</div>
+
+    <script>
+        const NGROK_REMOTE_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
+        let airdropSeconds = 15 * 60; 
+
+        // 1. FETCH LIVE DATA FROM BOT
+        async function updateLiveStats() {
+            try {
+                const response = await fetch(`${NGROK_REMOTE_URL}/api/stats?cache_burst=${Date.now()}`);
+                const data = await response.json();
+                
+                document.getElementById('eligible-wallets').innerText = data.totalHolders || 0;
+                document.getElementById('total-rewarded').innerText = (data.totalBtcDistributed || 0).toFixed(6);
+                document.getElementById('sync-timestamp').innerText = data.lastUpdate;
+                
+                airdropSeconds = 15 * 60; 
+            } catch (err) {
