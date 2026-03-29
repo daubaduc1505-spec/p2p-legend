@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$P2P | The Legend Returns</title>
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-glow: rgba(0, 255, 65, 0.5);
+            --gold: #ffcc00;
+            --alert-red: #ff003c;
+            --panel-bg: rgba(0, 20, 0, 0.9);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: black; overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            color: #efefef;
+            transition: background-color 0.1s;
+        }
+
+        /* Satoshi Matrix Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://thep2plegend.io/satoshi_background.jpg'); 
+            background-size: cover; background-position: center;
+            opacity: 0.12; z-index: 0; pointer-events: none;
+            filter: grayscale(100%) brightness(1.2);
+        }
+
+        #matrix { position: fixed; top: 0; left: 0; z-index: 1; }
+
+        .content {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100vh; text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px; box-sizing: border-box;
+        }
+
+        /* Hiệu ứng Rung (Shake) */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        /* Hiệu ứng Chớp sáng (Flash) */
+        @keyframes flash {
+            from { background-color: rgba(255, 0, 60, 0.3); }
+            to { background-color: transparent; }
+        }
+
+        .alert-active { animation: shake 0.5s infinite; }
+        .flash-active { animation: flash 0.2s infinite alternate; }
+
+        .glitch-title {
+            font-size: 2.8rem; font-weight: bold;
+            color: var(--matrix-green); text-shadow: 0 0 15px var(--matrix-green);
+            letter-spacing: 12px; margin-bottom: 8px; text-transform: uppercase;
+        }
+
+        .panel {
+            background: var(--panel-bg); border: 2px solid var(--matrix-green);
+            box-shadow: 0 0 20px var(--matrix-glow); padding: 22px; border-radius: 10px;
+            width: 95%; max-width: 650px; margin: 15px 0;
+        }
+
+        .panel-header { color: var(--gold); font-weight: bold; margin-bottom: 15px; text-transform: uppercase; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; font-size: 0.9rem; }
+        .dist-timer { color: var(--matrix-green); font-size: 1.2rem; font-weight: bold; }
+        .dist-timer.warning { color: var(--alert-red); text-shadow: 0 0 10px var(--alert-red); }
+
+        .live-logs { height: 80px; overflow: hidden; margin-top: 15px; font-size: 0.75rem; color: #888; text-align: left; }
+        .success { color: var(--matrix-green); }
+
+        .countdown-main { font-size: 1.8rem; color: var(--matrix-green); border: 1px solid var(--matrix-green); padding: 10px 20px; border-radius: 10px; margin: 15px 0; }
+
+        .btn { padding: 15px 30px; font-size: 1.1rem; color: var(--matrix-green); border: 2px solid var(--matrix-green); text-decoration: none; border-radius: 5px; text-transform: uppercase; font-weight: bold; }
+        .btn:hover { background: var(--matrix-green); color: black; }
+    </style>
+</head>
+<body id="body">
+
+<canvas id="matrix"></canvas>
+
+<div class="content" id="main-content">
+    <div class="glitch-title">THE P2P LEGEND</div>
+
+    <div class="panel">
+        <div class="panel-header">> BTC DISTRIBUTION PROTOCOL</div>
+        <div class="stats-grid">
+            <div>MIN HOLD: <span>> 1M $P2P</span></div>
+            <div>ELIGIBLE: <span>128</span></div>
+            <div>NEXT AIRDROP: <br><span class="dist-timer" id="dist-timer">15:00</span></div>
+            <div id="airdrop-msg" style="color: var(--gold); font-weight: bold; visibility: hidden;">WARNING: INCOMING!</div>
+        </div>
+        <div class="live-logs" id="bot-logs">
+            <div class="success">[SYSTEM]: MONITORING LIQUIDITY...</div>
+        </div>
+    </div>
+
+    <div class="countdown-main" id="timer">00d : 00h : 00m : 00s</div>
+    <a href="#" class="btn">ACQUIRE $P2P</a>
+</div>
+
+<script>
+    // Matrix Rain
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const chars = "01"; const fontSize = 16; const columns = canvas.width / fontSize;
+    const drops = []; for (let i = 0; i < columns; i++) drops[i] = 1;
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#00ff41"; ctx.font = fontSize + "px monospace";
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random()*chars.length)];
+            ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+            if (drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(draw, 50);
+
+    // 15-Min Timer with Shake & Flash
+    let timeLeft = 15 * 60;
+    const timerDisplay = document.getElementById('dist-timer');
+    const body = document.getElementById('body');
+    const content = document.getElementById('main-content');
+    const airdropMsg = document.getElementById('airdrop-msg');
+
+    setInterval(() => {
+        let mins = Math.floor(timeLeft / 60);
+        let secs = timeLeft % 60;
+        timerDisplay.innerText = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+        // 10 Seconds Warning
+        if (timeLeft <= 10 && timeLeft > 0) {
+            timerDisplay.classList.add('warning');
+            content.classList.add('alert-active');
+            body.classList.add('flash-active');
+            airdropMsg.style.visibility = 'visible';
+        } else if (timeLeft === 0) {
+            timerDisplay.classList.remove('warning');
+            content.classList.remove('alert-active');
+            body.classList.remove('flash-active');
+            airdropMsg.style.visibility = 'hidden';
+            document.getElementById('bot-logs').innerHTML += "<div class='success'>[ALERT]: BTC AIRDROP DISPATCHED!</div>";
+            timeLeft = 15 * 60; // Reset
+        }
+        timeLeft--;
+    }, 1000);
+
+    // Main Countdown
+    const target = new Date("April 5, 2026 00:00:00 UTC").getTime();
+    setInterval(() => {
+        const now = new Date().getTime();
+        const diff = target - now;
+        const d = Math.floor(diff / (86400000));
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('timer').innerText = `${d}d : ${h}h : ${m}m : ${s}s`;
+    }, 1000);
+</script>
+</body>
+</html>
