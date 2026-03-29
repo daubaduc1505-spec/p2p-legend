@@ -18,16 +18,12 @@
             background-color: var(--dark-bg);
             color: var(--neon-green);
             font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         .terminal-container {
-            width: 95%;
-            max-width: 1200px;
+            width: 95%; max-width: 1200px;
             border: 2px solid var(--neon-green);
             padding: 30px;
             box-shadow: 0 0 25px rgba(0, 255, 65, 0.2);
@@ -36,147 +32,50 @@
 
         h1 { text-align: center; letter-spacing: 12px; text-transform: uppercase; margin: 0 0 20px 0; font-size: 2.2em; }
 
-        .links-bar {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 35px;
-        }
-
-        .social-link {
-            color: var(--matrix-blue);
-            text-decoration: none;
-            border: 1px solid var(--matrix-blue);
-            padding: 8px 18px;
-            font-size: 0.8em;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-
-        .social-link:hover {
-            background: var(--matrix-blue);
-            color: #000;
-            box-shadow: 0 0 15px var(--matrix-blue);
-        }
-
         /* LED Stats Section */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-card {
-            border: 1px solid var(--neon-green);
-            padding: 25px;
-            text-align: center;
-            background: rgba(0, 255, 65, 0.05);
-        }
-
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .stat-card { border: 1px solid var(--neon-green); padding: 25px; text-align: center; background: rgba(0, 255, 65, 0.05); }
         .stat-label { font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; }
-        
-        .stat-value { 
-            font-family: var(--led-font); 
-            font-size: 2.8em; 
-            display: block; 
-            margin-top: 15px;
-        }
-
+        .stat-value { font-family: var(--led-font); font-size: 2.8em; display: block; margin-top: 15px; }
         .mcap-color { color: var(--matrix-blue); text-shadow: 0 0 10px var(--matrix-blue); }
         .reward-color { color: var(--warning-gold); text-shadow: 0 0 10px var(--warning-gold); }
-
-        /* Forecast Box */
-        .forecast-box {
-            border: 1px dashed var(--warning-gold);
-            color: var(--warning-gold);
-            padding: 15px;
-            text-align: center;
-            margin: 25px 0;
-            background: rgba(255, 204, 0, 0.05);
-            font-weight: bold;
-        }
-
-        /* Transaction Feed */
-        .feed-box {
-            margin-top: 30px;
-            border: 1px solid rgba(0, 255, 65, 0.3);
-            height: 140px;
-            background: rgba(0, 0, 0, 0.7);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feed-title {
-            background: rgba(0, 255, 65, 0.15);
-            padding: 5px 15px;
-            font-size: 0.7em;
-            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
-        }
-
-        #tx-feed { padding: 10px; font-size: 0.85em; flex-grow: 1; overflow-y: hidden; }
-
-        .tx-item { margin-bottom: 5px; border-left: 3px solid var(--neon-green); padding-left: 10px; animation: fadeIn 0.4s ease; }
-        .buy { color: var(--neon-green); }
-        .sell { color: #ff3333; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Table Section */
         table { width: 100%; border-collapse: collapse; margin-top: 30px; }
         th, td { border: 1px solid var(--neon-green); padding: 15px; text-align: center; }
         th { background: rgba(0, 255, 65, 0.2); font-size: 0.9em; }
 
-        .pulse-text { animation: pulse 2s infinite; color: #fff; }
-        @keyframes pulse { 50% { opacity: 0.3; } }
+        .feed-box { margin-top: 30px; border: 1px solid rgba(0, 255, 65, 0.3); height: 140px; background: rgba(0, 0, 0, 0.7); overflow: hidden; }
+        .tx-item { padding: 5px 15px; font-size: 0.85em; border-left: 3px solid var(--neon-green); margin: 5px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .footer {
-            margin-top: 40px;
-            font-size: 0.75em;
-            opacity: 0.5;
-            line-height: 1.8;
-            border-top: 1px solid rgba(0, 255, 65, 0.2);
-            padding-top: 20px;
-            width: 100%;
-        }
+        /* Sound Control */
+        .sound-status { font-size: 0.7em; color: var(--warning-gold); margin-bottom: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
+<div class="sound-status" onclick="enableAudio()">[ CLICK ANYWHERE TO ACTIVATE AUDIO SYSTEM ]</div>
+
 <div class="terminal-container">
     <h1>P2P MATRIX TERMINAL</h1>
     
-    <div class="links-bar">
-        <a href="https://pump.fun/coin/95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump" target="_blank" class="social-link">PUMP.FUN LIVE CHART</a>
-        <a href="#" class="social-link">TWITTER / X</a>
-    </div>
-
     <div class="stats-grid">
         <div class="stat-card">
-            <span class="stat-label">MARKET CAPITALIZATION</span>
+            <span class="stat-label">MARKET CAP (USD)</span>
             <span id="mcap-display" class="stat-value mcap-color">000,000</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">TOTAL HOLDERS</span>
+            <span class="stat-label">ELIGIBLE HOLDERS</span>
             <span id="holder-display" class="stat-value">000</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">BTC DISTRIBUTED</span>
+            <span class="stat-label">BTC REWARDS</span>
             <span id="reward-display" class="stat-value reward-color">0.0000</span>
         </div>
     </div>
 
-    <div class="forecast-box">
-        PROTOCOL STATUS: <span id="sys-status" class="pulse-text">SYNCHRONIZING</span> 
-        | REWARD WALLET: <span id="reward-addr-short">cbbtcf3...4iMij</span>
-    </div>
-
-    <div class="feed-box">
-        <div class="feed-title">REAL-TIME BLOCKCHAIN ACTIVITY LOG</div>
-        <div id="tx-feed">
-            <div class="tx-item">System initialized... Monitoring $P2P Token activity...</div>
-        </div>
-    </div>
+    <div id="tx-feed" class="feed-box"></div>
 
     <table>
         <thead>
@@ -187,83 +86,83 @@
                 <th>STATUS</th>
             </tr>
         </thead>
-        <tbody id="leaderboard-body">
-            <tr><td colspan="4">CONNECTING TO LOCAL ENGINE...</td></tr>
-        </tbody>
+        <tbody id="leaderboard-body"></tbody>
     </table>
-
-    <div class="footer">
-        PROTOCOL: P2P_REWARD_v6.0 | NETWORK: SOLANA MAINNET<br>
-        DESTINATION: <span id="reward-addr-full" style="color: #fff;">cbbtcf3aa...4iMij</span><br>
-        LAST_SYNC: <span id="sync-timestamp">INITIALIZING...</span> | RPC: HELIUS_CLUSTER
-    </div>
 </div>
 
 <script>
-    // Configuration - Updated based on your Ngrok link
     const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
     const TOKEN_MINT = '95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump';
+    
+    let audioEnabled = false;
+    let lastHolderCount = 0;
+
+    // Hệ thống âm thanh Beep Hacker
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq = 800, duration = 0.1) {
+        if (!audioEnabled) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function enableAudio() {
+        audioCtx.resume();
+        audioEnabled = true;
+        document.querySelector('.sound-status').innerText = "[ AUDIO SYSTEM: ONLINE ]";
+        playBeep(400, 0.2);
+    }
 
     async function updateDashboard() {
         try {
-            // 1. Fetch Market Cap from DexScreener
+            // Get DexScreener Data
             const mcapRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
             const mcapData = await mcapRes.json();
-            
-            if(mcapData.pairs && mcapData.pairs[0]) {
-                const fdv = Math.round(mcapData.pairs[0].fdv);
-                document.getElementById('mcap-display').innerText = fdv.toLocaleString();
-                
-                // Simulated transaction feed logs
-                const feed = document.getElementById('tx-feed');
-                const time = new Date().toLocaleTimeString();
-                const type = Math.random() > 0.4 ? 'buy' : 'sell';
-                const log = `<div class="tx-item">[${time}] <span class="${type}">${type.toUpperCase()}</span> detected via Pump.fun</div>`;
-                feed.insertAdjacentHTML('afterbegin', log);
-                if(feed.children.length > 5) feed.lastElementChild.remove();
+            if(mcapData.pairs) {
+                document.getElementById('mcap-display').innerText = Math.round(mcapData.pairs[0].fdv).toLocaleString();
+                playBeep(1200, 0.05); // Tiếng bip nhẹ khi cập nhật giá
             }
 
-            // 2. Fetch Personal Bot Stats (Your Successful v6.0 Bot)
+            // Get Bot Data
             const botRes = await fetch(`${NGROK_API}/api/stats`);
             const data = await botRes.json();
 
-            // 3. Update Stats UI
+            // Kiểm tra nếu có ví mới thì phát âm thanh cảnh báo
+            if(data.totalHolders > lastHolderCount && lastHolderCount !== 0) {
+                playBeep(1500, 0.3); // Tiếng bip cao khi có holder mới
+                addLog("NEW LEGENDARY HOLDER DETECTED ON-CHAIN!");
+            }
+            lastHolderCount = data.totalHolders;
+
             document.getElementById('holder-display').innerText = data.totalHolders.toString().padStart(3, '0');
             document.getElementById('reward-display').innerText = data.totalBtcDistributed.toFixed(4);
-            document.getElementById('sys-status').innerText = data.systemStatus;
-            document.getElementById('reward-addr-full').innerText = data.btcAddress;
 
-            // 4. Update Leaderboard Table
             const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = '';
-            
-            if (data.topHolders && data.topHolders.length > 0) {
-                data.topHolders.forEach(h => {
-                    tbody.insertAdjacentHTML('beforeend', `
-                        <tr>
-                            <td>${h.rank}</td>
-                            <td>${h.wallet}</td>
-                            <td>${h.balance}</td>
-                            <td class="pulse-text">${h.status}</td>
-                        </tr>
-                    `);
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="4">SEARCHING FOR WHALES...</td></tr>';
-            }
+            tbody.innerHTML = data.topHolders.map(h => `
+                <tr>
+                    <td>${h.rank}</td>
+                    <td>${h.wallet}</td>
+                    <td>${h.balance}</td>
+                    <td style="color: #fff">VERIFIED</td>
+                </tr>
+            `).join('');
 
-            document.getElementById('sync-timestamp').innerText = new Date().toLocaleTimeString();
-
-        } catch (err) {
-            console.error("Connection Error:", err);
-            document.getElementById('sys-status').innerText = "DISCONNECTED";
-        }
+        } catch (e) { console.log("Engine offline..."); }
     }
 
-    // Refresh data every 10 seconds for smooth UI
-    updateDashboard();
-    setInterval(updateDashboard, 10000);
-</script>
+    function addLog(msg) {
+        const feed = document.getElementById('tx-feed');
+        feed.insertAdjacentHTML('afterbegin', `<div class="tx-item">[${new Date().toLocaleTimeString()}] ${msg}</div>`);
+    }
 
+    setInterval(updateDashboard, 10000);
+    updateDashboard();
+</script>
 </body>
 </html>
