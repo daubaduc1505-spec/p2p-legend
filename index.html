@@ -143,6 +143,28 @@
         <a href="https://x.com/i/communities/2038186875488522599/" class="btn" style="border-color: white; color: white;">X COMMUNITY</a>
     </div>
 </div>
+    <div style="padding: 20px; background: #1a1a1a; color: gold; border-radius: 10px; text-align: center;">
+    <h3>HỆ THỐNG PHÂN PHỐI BTC</h3>
+    <p>Số người đủ điều kiện nhận thưởng: <strong id="holder-count" style="font-size: 24px;">Đang tải...</strong></p>
+    <small>Cập nhật cuối: <span id="last-update">-</span></small>
+</div>
+
+<script>
+    async function updateWebStats() {
+        try {
+            // Nếu chạy trên máy tính cá nhân, dùng localhost. 
+            // Nếu treo Bot trên VPS, hãy thay localhost bằng IP của VPS.
+            const res = await fetch('http://localhost:3000/api/stats');
+            const data = await res.json();
+            document.getElementById('holder-count').innerText = data.totalHolders;
+            document.getElementById('last-update').innerText = data.lastUpdate;
+        } catch (e) {
+            document.getElementById('holder-count').innerText = "Bot Offline";
+        }
+    }
+    setInterval(updateWebStats, 5000); // Cập nhật trên web mỗi 5 giây
+    updateWebStats();
+</script>
 
 <script>
     // 1. Matrix Rain
