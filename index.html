@@ -6,141 +6,104 @@
     <title>$P2P Satoshi Matrix Dashboard</title>
     <style>
         body { 
-            background: #050505; 
-            color: #00ff41; 
+            background: #000; color: #00ff41; 
             font-family: 'Courier New', Courier, monospace; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden;
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; margin: 0; overflow: hidden;
         }
-        .matrix-card { 
-            border: 1px solid #00ff41; 
-            padding: 50px; 
-            text-align: center; 
-            box-shadow: 0 0 20px #00ff41; 
-            background: rgba(0, 0, 0, 0.9); 
-            min-width: 380px;
-            position: relative;
+        .matrix-container { 
+            border: 1px solid #00ff41; padding: 40px; text-align: center; 
+            box-shadow: 0 0 30px #00ff41; background: rgba(0, 0, 0, 0.9); 
+            width: 450px;
         }
-        .glitch-text { 
-            font-size: 1.8rem; 
-            letter-spacing: 4px; 
-            margin-bottom: 20px; 
-            text-transform: uppercase;
-            font-weight: bold;
+        .header { 
+            font-size: 1.8rem; letter-spacing: 5px; margin-bottom: 25px; 
+            font-weight: bold; border-bottom: 2px solid #00ff41; padding-bottom: 10px;
         }
-        .counter-container {
-            margin: 30px 0;
-        }
-        .label {
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            opacity: 0.8;
-        }
-        .counter { 
-            font-size: 6rem; 
-            margin: 10px 0; 
-            color: #fff; 
-            text-shadow: 0 0 25px #00ff41; 
-        }
-        .status-box { 
-            font-size: 1rem; 
-            color: #008f11; 
-            border-top: 1px solid #00ff41;
-            padding-top: 20px;
-            margin-top: 20px;
-        }
-        .dot { 
-            height: 10px; 
-            width: 10px; 
-            background: #00ff41; 
-            border-radius: 50%; 
-            display: inline-block; 
-            margin-right: 8px;
-            animation: pulse 1.5s infinite; 
-        }
-        .sync-time {
-            margin-top: 15px; 
-            font-size: 0.7rem; 
-            opacity: 0.5;
-        }
-        @keyframes pulse { 
-            0% { opacity: 1; transform: scale(1); } 
-            50% { opacity: 0.2; transform: scale(1.2); } 
-            100% { opacity: 1; transform: scale(1); } 
-        }
+        .main-stat { margin: 30px 0; border: 1px solid #00ff41; padding: 25px; background: rgba(0, 255, 65, 0.05); }
+        .main-stat .label { font-size: 0.8rem; opacity: 0.6; text-transform: uppercase; }
+        .main-stat .value { font-size: 5.5rem; color: #fff; text-shadow: 0 0 20px #00ff41; font-weight: bold; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .grid-item { border: 1px dashed #00ff41; padding: 15px; }
+        .grid-item .label { font-size: 0.6rem; opacity: 0.6; margin-bottom: 5px; text-transform: uppercase; }
+        .grid-item .value { font-size: 1.2rem; color: #fff; }
+
+        .timer { color: #ffcc00; font-size: 1.2rem; margin: 20px 0; font-weight: bold; }
+        .footer { font-size: 0.8rem; border-top: 1px solid #00ff41; padding-top: 15px; color: #008f11; }
+        .dot { height: 8px; width: 8px; background: #00ff41; border-radius: 50%; display: inline-block; margin-right: 5px; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.1; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="matrix-card">
-        <div class="glitch-text">$P2P SATOSHI MATRIX</div>
+    <div class="matrix-container">
+        <div class="header">$P2P SATOSHI MATRIX</div>
         
-        <div class="counter-container">
-            <div class="label">ELIGIBLE HOLDERS</div>
-            <div class="counter" id="holder-count">0</div>
+        <div class="main-stat">
+            <div class="label">Eligible Holders</div>
+            <div class="value" id="holders">0</div>
         </div>
 
-        <div class="status-box">
-            <span class="dot"></span> SYSTEM STATUS: <span id="status">CONNECTING...</span>
+        <div class="grid">
+            <div class="grid-item">
+                <div class="label">BTC Distributed</div>
+                <div class="value" id="btc">0.000000</div>
+            </div>
+            <div class="grid-item">
+                <div class="label">Distribution Rounds</div>
+                <div class="value" id="rounds">0</div>
+            </div>
         </div>
-        
-        <div class="sync-time">
-            LAST BLOCK SYNC: <span id="time">-</span>
+
+        <div class="timer">NEXT SCAN: <span id="countdown">15:00</span></div>
+
+        <div class="footer">
+            <span class="dot"></span> STATUS: <span id="status">CONNECTING...</span>
+            <div style="font-size: 0.6rem; margin-top: 10px; opacity: 0.4;">
+                LAST SYNC: <span id="sync-time">-</span>
+            </div>
         </div>
     </div>
 
     <script>
-        // LINK NGROK CỦA BẠN ĐÃ ĐƯỢC CẬP NHẬT TẠI ĐÂY
-        const NGROK_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
+        // UPDATE YOUR NGROK LINK HERE
+        const API_ENDPOINT = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
+        
+        let timeLeft = 15 * 60;
 
-        async function fetchStats() {
+        async function updateStats() {
             try {
-                const response = await fetch(`${NGROK_URL}/api/stats`);
-                if (!response.ok) throw new Error('Network response was not ok');
+                const res = await fetch(`${API_ENDPOINT}/api/stats?nocache=${Date.now()}`);
+                const data = await res.json();
                 
-                const data = await response.json();
-                
-                // Cập nhật giao diện
-                document.getElementById('holder-count').innerText = data.totalHolders;
+                document.getElementById('holders').innerText = data.totalHolders;
+                document.getElementById('btc').innerText = (data.totalBtcDistributed || 0).toFixed(6);
+                document.getElementById('rounds').innerText = data.rounds || 0;
                 document.getElementById('status').innerText = data.status.toUpperCase();
-                document.getElementById('time').innerText = data.lastUpdate;
-                document.getElementById('status').style.color = "#00ff41";
+                document.getElementById('sync-time').innerText = data.lastUpdate;
+                
+                timeLeft = 15 * 60; 
             } catch (e) {
-                console.error("Fetch error:", e);
-                document.getElementById('status').innerText = "SYSTEM OFFLINE";
-                document.getElementById('status').style.color = "#ff0000";
+                document.getElementById('status').innerText = "OFFLINE";
+                document.getElementById('status').style.color = "red";
             }
         }
 
-        // Tự động cập nhật mỗi 5 giây
-        setInterval(fetchStats, 5000); 
-        
-        // Chạy lần đầu tiên ngay khi load trang
-        fetchStats();
-    </script>
-    const NGROK_URL = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
-
-    async function fetchStats() {
-        try {
-            // Thêm timestamp để tránh bị trình duyệt lưu cache cũ
-            const response = await fetch(`${NGROK_URL}/api/stats?t=${Date.now()}`);
-            const data = await response.json();
-            
-            document.getElementById('holder-count').innerText = data.totalHolders;
-            // Hiển thị số BTC phân phối với 6 số thập phân
-            document.getElementById('btc-amount').innerText = data.totalBtcDistributed.toFixed(6);
-            document.getElementById('status').innerText = data.status.toUpperCase();
-            document.getElementById('time').innerText = data.lastUpdate;
-        } catch (e) {
-            document.getElementById('status').innerText = "OFFLINE";
+        function startTimer() {
+            setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    const m = Math.floor(timeLeft / 60);
+                    const s = timeLeft % 60;
+                    document.getElementById('countdown').innerText = `${m}:${s < 10 ? '0' + s : s}`;
+                }
+            }, 1000);
         }
-    }
-    setInterval(fetchStats, 5000);
-    fetchStats();
-</script>
+
+        setInterval(updateStats, 10000);
+        updateStats();
+        startTimer();
+    </script>
 </body>
 </html>
