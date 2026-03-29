@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE P2P LEGEND | SATOSHI NAKAMOTO</title>
+    <title>THE P2P LEGEND | SATOSHI NAKAMOTO BIRTHDAY</title>
     <link href="https://fonts.cdnfonts.com/css/digital-numbers" rel="stylesheet">
     <style>
         :root {
@@ -20,22 +20,22 @@
             font-family: 'Courier New', Courier, monospace;
             margin: 0; padding: 20px;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 150vh; /* Tăng chiều cao để có thể cuộn */
+            min-height: 160vh; /* Cho phép cuộn trang thoải mái */
         }
 
         #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.15; }
 
-        /* Countdown Nổi Bật */
+        /* Countdown Nổi Bật - Ưu tiên hàng đầu */
         .countdown-section {
             width: 100%; max-width: 1000px;
-            text-align: center; padding: 30px;
-            border: 2px double var(--warning-gold);
-            background: rgba(0, 0, 0, 0.9);
-            margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+            text-align: center; padding: 40px 20px;
+            border: 3px double var(--warning-gold);
+            background: rgba(0, 0, 0, 0.95);
+            margin-bottom: 40px;
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.4);
         }
-        .countdown-title { color: var(--warning-gold); font-weight: bold; letter-spacing: 5px; margin-bottom: 15px; font-size: 1.1em; }
-        #timer { font-family: var(--led-font); font-size: 3.5em; color: #fff; text-shadow: 0 0 20px #fff; }
+        .countdown-title { color: var(--warning-gold); font-weight: bold; letter-spacing: 6px; margin-bottom: 20px; font-size: 1.2em; text-transform: uppercase; }
+        #timer { font-family: var(--led-font); font-size: 4.5em; color: #fff; text-shadow: 0 0 25px #fff; }
 
         .terminal-container {
             width: 95%; max-width: 1100px;
@@ -44,26 +44,33 @@
             box-shadow: 0 0 30px rgba(0, 255, 65, 0.1);
         }
 
-        /* Giảm kích thước các số thống kê theo yêu cầu */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0; }
-        .stat-card { border: 1px solid rgba(0, 255, 65, 0.3); padding: 15px; text-align: center; }
-        .stat-value { font-family: var(--led-font); font-size: 2em; display: block; margin-bottom: 5px; }
-        .usd-val { font-size: 0.8em; color: #888; display: block; }
+        /* Thống kê - Kích thước nhỏ gọn vừa phải */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 25px 0; }
+        .stat-card { border: 1px solid rgba(0, 255, 65, 0.3); padding: 20px; text-align: center; }
+        .stat-value { font-family: var(--led-font); font-size: 2.2em; display: block; margin-bottom: 8px; }
+        .usd-val { font-size: 0.9em; color: #888; font-weight: bold; }
 
-        /* Bảng Holder */
-        .holder-section { margin-top: 30px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
-        th, td { border: 1px solid rgba(0, 255, 65, 0.3); padding: 12px; text-align: center; }
-        th { background: rgba(0, 255, 65, 0.1); color: var(--matrix-blue); }
+        /* Bảng danh sách ví */
+        .holder-section { margin-top: 40px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; }
+        th, td { border: 1px solid rgba(0, 255, 65, 0.2); padding: 15px; text-align: center; }
+        th { background: rgba(0, 255, 65, 0.15); color: var(--matrix-blue); letter-spacing: 2px; }
+
+        .links-container { display: flex; justify-content: center; gap: 25px; margin-top: 30px; }
+        .p2p-link {
+            color: var(--matrix-blue); text-decoration: none; border: 1px solid var(--matrix-blue);
+            padding: 12px 25px; text-transform: uppercase; font-size: 0.85em; transition: 0.3s;
+        }
+        .p2p-link:hover { background: var(--matrix-blue); color: #000; box-shadow: 0 0 15px var(--matrix-blue); }
 
         .init-btn { 
             color: var(--warning-gold); border: 2px solid var(--warning-gold); 
-            padding: 15px; cursor: pointer; margin-bottom: 20px; 
-            text-transform: uppercase; font-weight: bold; width: 100%; text-align: center;
+            padding: 18px; cursor: pointer; margin-bottom: 25px; 
+            text-transform: uppercase; font-weight: bold; width: 100%; text-align: center; font-size: 1em;
         }
 
-        .shake-effect { animation: shake 0.5s both; }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-4px);} 75% {transform: translateX(4px);} }
+        .shake-effect { animation: shake 0.6s both; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 20% {transform: translateX(-5px);} 40% {transform: translateX(5px);} 60% {transform: translateX(-5px);} 80% {transform: translateX(5px);} }
     </style>
 </head>
 <body>
@@ -76,70 +83,81 @@
 </div>
 
 <div class="terminal-container" id="terminal">
-    <div class="init-btn" onclick="startSystem()">[ > INITIALIZE P2P LEGEND PROTOCOL < ]</div>
+    <div class="init-btn" onclick="activateProtocol()">[ > INITIALIZE P2P LEGEND NEURAL LINK < ]</div>
     
-    <h1 style="text-align: center; letter-spacing: 10px;">THE P2P LEGEND</h1>
+    <h1 style="text-align: center; letter-spacing: 12px; margin-top: 0;">THE P2P LEGEND</h1>
 
     <div class="stats-grid">
         <div class="stat-card">
-            <span style="font-size:0.7em">MARKET CAP (USD)</span>
-            <span id="mcap-display" class="stat-value" style="color:var(--matrix-blue)">0</span>
+            <span style="font-size:0.75em; opacity: 0.8;">MARKET CAP (USD)</span>
+            <span id="mcap-display" class="stat-value" style="color:var(--matrix-blue)">$0</span>
         </div>
         <div class="stat-card">
-            <span style="font-size:0.7em">ELIGIBLE HOLDERS</span>
+            <span style="font-size:0.75em; opacity: 0.8;">ELIGIBLE HOLDERS</span>
             <span id="holder-display" class="stat-value">000</span>
         </div>
         <div class="stat-card">
-            <span style="font-size:0.7em">BTC REWARDS</span>
-            <span id="reward-display" class="stat-value" style="color:var(--warning-gold)">0.0000</span>
+            <span style="font-size:0.75em; opacity: 0.8;">BTC REWARDS</span>
+            <span id="reward-display" class="stat-value" style="color:var(--warning-gold)">0.000000</span>
             <span id="reward-usd" class="usd-val">≈ $0.00 USD</span>
         </div>
     </div>
 
     <div class="holder-section">
-        <h3 style="font-size:0.9em; border-bottom: 1px solid var(--neon-green); padding-bottom: 5px;">TOP 10 LEGENDARY HOLDERS</h3>
+        <h3 style="font-size:1em; border-left: 4px solid var(--neon-green); padding-left: 15px; margin-bottom: 10px;">TOP 10 LEGENDARY HOLDERS</h3>
         <table>
-            <thead><tr><th>#</th><th>WALLET ADDRESS</th><th>BALANCE</th><th>STATUS</th></tr></thead>
-            <tbody id="holder-table"></tbody>
+            <thead>
+                <tr>
+                    <th>RANK</th>
+                    <th>WALLET ADDRESS</th>
+                    <th>TOKEN BALANCE</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody id="holder-table">
+                <tr><td colspan="4">AWAITING CONNECTION...</td></tr>
+            </tbody>
         </table>
     </div>
 
-    <div style="margin-top: 30px; text-align: center;">
-        <a href="https://pump.fun/coin/95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump" target="_blank" style="color:var(--matrix-blue); text-decoration:none; border:1px solid; padding:10px;">VIEW ON PUMP.FUN</a>
+    <div class="links-container">
+        <a href="https://pump.fun/coin/95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump" target="_blank" class="p2p-link">LIVE ON PUMP.FUN</a>
+        <a href="https://x.com/i/communities/2038186875488522599" target="_blank" class="p2p-link">X COMMUNITY</a>
     </div>
 </div>
 
 <audio id="bgm" loop><source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg"></audio>
 
 <script>
-    // --- CẤU HÌNH ---
-    const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev'; // Cần link Ngrok đang chạy
+    // --- CONFIGURATION ---
+    const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev'; // Link Ngrok hiện tại của bạn
     const TOKEN_MINT = '95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump';
-    let lastBtc = 0;
-    const BTC_PRICE_USD = 65000; // Giá BTC giả lập để quy đổi
+    let btcBaseValue = 0;
+    const BTC_PRICE_LIVE = 69420; // Giá BTC hiện tại để quy đổi
 
-    // 1. Countdown Logic
-    function updateCountdown() {
-        const birthday = new Date("April 5, 2026 00:00:00").getTime();
+    // 1. Countdown Logic (April 5th)
+    function runCountdown() {
+        const target = new Date("April 5, 2026 00:00:00").getTime();
         const now = new Date().getTime();
-        const diff = birthday - now;
+        const gap = target - now;
 
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+        const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((gap % (1000 * 60)) / 1000);
 
         document.getElementById('timer').innerText = 
             `${d.toString().padStart(2,'0')}D : ${h.toString().padStart(2,'0')}H : ${m.toString().padStart(2,'0')}M : ${s.toString().padStart(2,'0')}S`;
     }
-    setInterval(updateCountdown, 1000);
+    setInterval(runCountdown, 1000);
 
-    // 2. Matrix Rain
+    // 2. Matrix Background
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
     canvas.height = window.innerHeight; canvas.width = window.innerWidth;
-    const drops = new Array(Math.floor(canvas.width / 20)).fill(1);
-    function drawMatrix() {
+    const columns = Math.floor(canvas.width / 20);
+    const drops = new Array(columns).fill(1);
+    function matrix() {
         ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#0F0"; ctx.font = "15px monospace";
         drops.forEach((y, i) => {
@@ -147,52 +165,52 @@
             if (y * 20 > canvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
         });
     }
-    setInterval(drawMatrix, 50);
+    setInterval(matrix, 50);
 
-    // 3. Update Logic
-    async function updateData() {
+    // 3. API Logic
+    async function syncData() {
         try {
-            // Lấy Market Cap thật
-            const dexRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
-            const dexData = await dexRes.json();
+            // Market Cap Real-time
+            const dexResponse = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
+            const dexData = await dexResponse.json();
             if(dexData.pairs) {
                 document.getElementById('mcap-display').innerText = "$" + Math.round(dexData.pairs[0].fdv).toLocaleString();
             }
 
-            // Lấy dữ liệu từ Bot qua Ngrok
-            const botRes = await fetch(`${NGROK_API}/api/stats`);
-            const data = await botRes.json();
+            // Bot Data via Ngrok
+            const botResponse = await fetch(`${NGROK_API}/api/stats`);
+            const data = await botResponse.json();
 
-            // Rung màn hình khi BTC tăng
-            if(data.totalBtcDistributed > lastBtc && lastBtc !== 0) {
+            // Shake if distribution updates
+            if(data.totalBtcDistributed > btcBaseValue && btcBaseValue !== 0) {
                 document.getElementById('terminal').classList.add('shake-effect');
-                setTimeout(() => document.getElementById('terminal').classList.remove('shake-effect'), 500);
+                setTimeout(() => document.getElementById('terminal').classList.remove('shake-effect'), 600);
             }
-            lastBtc = data.totalBtcDistributed;
+            btcBaseValue = data.totalBtcDistributed;
 
             document.getElementById('holder-display').innerText = data.totalHolders;
             document.getElementById('reward-display').innerText = data.totalBtcDistributed.toFixed(6);
-            document.getElementById('reward-usd').innerText = `≈ $${(data.totalBtcDistributed * BTC_PRICE_USD).toFixed(2)} USD`;
+            document.getElementById('reward-usd').innerText = `≈ $${(data.totalBtcDistributed * BTC_PRICE_LIVE).toLocaleString(undefined, {minimumFractionDigits: 2})} USD`;
 
-            // Cập nhật Top 10 Holders
-            const table = document.getElementById('holder-table');
-            table.innerHTML = data.topHolders.slice(0, 10).map(h => `
+            // Top 10 Table
+            const tbody = document.getElementById('holder-table');
+            tbody.innerHTML = data.topHolders.slice(0, 10).map(h => `
                 <tr>
                     <td>${h.rank}</td>
                     <td style="color:var(--matrix-blue)">${h.wallet}</td>
                     <td>${h.balance}</td>
-                    <td style="color:#fff">VERIFIED</td>
+                    <td style="color:#fff">LEGENDARY</td>
                 </tr>
             `).join('');
 
-        } catch (e) { console.log("Connecting to Bot..."); }
+        } catch (e) { console.log("Re-establishing link..."); }
     }
 
-    function startSystem() {
+    function activateProtocol() {
         document.getElementById('bgm').play();
         document.querySelector('.init-btn').style.display = 'none';
-        updateData();
-        setInterval(updateData, 10000);
+        syncData();
+        setInterval(syncData, 12000);
     }
 </script>
 </body>
