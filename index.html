@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P2P MATRIX TERMINAL | LIVE MONITOR</title>
+    <title>P2P MATRIX TERMINAL | LEGENDARY EDITION</title>
     <link href="https://fonts.cdnfonts.com/css/digital-numbers" rel="stylesheet">
     <style>
         :root {
@@ -20,6 +20,16 @@
             font-family: 'Courier New', Courier, monospace;
             margin: 0; padding: 20px;
             display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Hiệu ứng rung màn hình */
+        .shake-effect { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
         .terminal-container {
@@ -27,42 +37,43 @@
             border: 2px solid var(--neon-green);
             padding: 30px;
             box-shadow: 0 0 25px rgba(0, 255, 65, 0.2);
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.9);
         }
 
-        h1 { text-align: center; letter-spacing: 12px; text-transform: uppercase; margin: 0 0 20px 0; font-size: 2.2em; }
+        h1 { text-align: center; letter-spacing: 12px; text-transform: uppercase; margin-bottom: 30px; }
 
-        /* LED Stats Section */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .stat-card { border: 1px solid var(--neon-green); padding: 25px; text-align: center; background: rgba(0, 255, 65, 0.05); }
-        .stat-label { font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; }
-        .stat-value { font-family: var(--led-font); font-size: 2.8em; display: block; margin-top: 15px; }
-        .mcap-color { color: var(--matrix-blue); text-shadow: 0 0 10px var(--matrix-blue); }
-        .reward-color { color: var(--warning-gold); text-shadow: 0 0 10px var(--warning-gold); }
+        .stat-card { border: 1px solid var(--neon-green); padding: 20px; text-align: center; background: rgba(0, 255, 65, 0.05); }
+        .stat-label { font-size: 0.8em; text-transform: uppercase; opacity: 0.8; }
+        .stat-value { font-family: var(--led-font); font-size: 3em; display: block; margin-top: 10px; }
+        
+        .mcap-color { color: var(--matrix-blue); }
+        .reward-color { color: var(--warning-gold); }
 
-        /* Table Section */
-        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-        th, td { border: 1px solid var(--neon-green); padding: 15px; text-align: center; }
-        th { background: rgba(0, 255, 65, 0.2); font-size: 0.9em; }
+        .feed-box { margin-top: 20px; border: 1px solid rgba(0, 255, 65, 0.3); height: 120px; background: #000; overflow: hidden; padding: 10px; font-size: 0.8em; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid var(--neon-green); padding: 12px; text-align: center; }
+        th { background: rgba(0, 255, 65, 0.2); }
 
-        .feed-box { margin-top: 30px; border: 1px solid rgba(0, 255, 65, 0.3); height: 140px; background: rgba(0, 0, 0, 0.7); overflow: hidden; }
-        .tx-item { padding: 5px 15px; font-size: 0.85em; border-left: 3px solid var(--neon-green); margin: 5px; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Sound Control */
-        .sound-status { font-size: 0.7em; color: var(--warning-gold); margin-bottom: 10px; cursor: pointer; }
+        .system-btn { 
+            color: var(--warning-gold); 
+            border: 1px solid var(--warning-gold); 
+            padding: 10px; cursor: pointer; 
+            margin-bottom: 15px; text-transform: uppercase; font-size: 0.7em;
+        }
     </style>
 </head>
-<body>
+<body id="main-body">
 
-<div class="sound-status" onclick="enableAudio()">[ CLICK ANYWHERE TO ACTIVATE AUDIO SYSTEM ]</div>
+<div class="system-btn" onclick="startSystem()">[ INITIALIZE MATRIX NEURAL LINK ]</div>
 
-<div class="terminal-container">
+<div class="terminal-container" id="terminal">
     <h1>P2P MATRIX TERMINAL</h1>
     
     <div class="stats-grid">
         <div class="stat-card">
-            <span class="stat-label">MARKET CAP (USD)</span>
+            <span class="stat-label">MARKET CAP</span>
             <span id="mcap-display" class="stat-value mcap-color">000,000</span>
         </div>
         <div class="stat-card">
@@ -70,7 +81,7 @@
             <span id="holder-display" class="stat-value">000</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">BTC REWARDS</span>
+            <span class="stat-label">BTC DISTRIBUTED</span>
             <span id="reward-display" class="stat-value reward-color">0.0000</span>
         </div>
     </div>
@@ -82,7 +93,7 @@
             <tr>
                 <th>RANK</th>
                 <th>LEGENDARY WALLET</th>
-                <th>TOKEN BALANCE</th>
+                <th>BALANCE</th>
                 <th>STATUS</th>
             </tr>
         </thead>
@@ -90,55 +101,61 @@
     </table>
 </div>
 
+<audio id="bg-music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+</audio>
+
 <script>
-    const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev';
+    const NGROK_API = 'https://inevitably-unvacated-shirl.ngrok-free.dev'; 
     const TOKEN_MINT = '95QdJeTY2WDePpZbu5GnB8uAyVAvngGukhr3yth3pump';
     
-    let audioEnabled = false;
-    let lastHolderCount = 0;
-
-    // Hệ thống âm thanh Beep Hacker
+    let lastReward = 0;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeep(freq = 800, duration = 0.1) {
-        if (!audioEnabled) return;
+
+    function playAlertSound() {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.5);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.5);
     }
 
-    function enableAudio() {
+    function startSystem() {
         audioCtx.resume();
-        audioEnabled = true;
-        document.querySelector('.sound-status').innerText = "[ AUDIO SYSTEM: ONLINE ]";
-        playBeep(400, 0.2);
+        document.getElementById('bg-music').play();
+        document.querySelector('.system-btn').innerText = "[ SYSTEM ONLINE - ENJOY THE MATRIX ]";
+        updateDashboard();
+    }
+
+    function triggerDistributionEffect() {
+        const terminal = document.getElementById('terminal');
+        terminal.classList.add('shake-effect');
+        playAlertSound();
+        setTimeout(() => terminal.classList.remove('shake-effect'), 500);
+        
+        const feed = document.getElementById('tx-feed');
+        feed.insertAdjacentHTML('afterbegin', `<div style="color:var(--warning-gold)">[!] DISTRIBUTION CYCLE DETECTED - BTC REWARDS UPDATED</div>`);
     }
 
     async function updateDashboard() {
         try {
-            // Get DexScreener Data
+            // Get DexScreener
             const mcapRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${TOKEN_MINT}`);
             const mcapData = await mcapRes.json();
-            if(mcapData.pairs) {
-                document.getElementById('mcap-display').innerText = Math.round(mcapData.pairs[0].fdv).toLocaleString();
-                playBeep(1200, 0.05); // Tiếng bip nhẹ khi cập nhật giá
-            }
+            if(mcapData.pairs) document.getElementById('mcap-display').innerText = Math.round(mcapData.pairs[0].fdv).toLocaleString();
 
-            // Get Bot Data
+            // Get Bot API
             const botRes = await fetch(`${NGROK_API}/api/stats`);
             const data = await botRes.json();
 
-            // Kiểm tra nếu có ví mới thì phát âm thanh cảnh báo
-            if(data.totalHolders > lastHolderCount && lastHolderCount !== 0) {
-                playBeep(1500, 0.3); // Tiếng bip cao khi có holder mới
-                addLog("NEW LEGENDARY HOLDER DETECTED ON-CHAIN!");
+            // Check for Reward Distribution
+            if(data.totalBtcDistributed > lastReward && lastReward !== 0) {
+                triggerDistributionEffect();
             }
-            lastHolderCount = data.totalHolders;
+            lastReward = data.totalBtcDistributed;
 
             document.getElementById('holder-display').innerText = data.totalHolders.toString().padStart(3, '0');
             document.getElementById('reward-display').innerText = data.totalBtcDistributed.toFixed(4);
@@ -149,20 +166,14 @@
                     <td>${h.rank}</td>
                     <td>${h.wallet}</td>
                     <td>${h.balance}</td>
-                    <td style="color: #fff">VERIFIED</td>
+                    <td style="color:#fff">VERIFIED</td>
                 </tr>
             `).join('');
 
-        } catch (e) { console.log("Engine offline..."); }
-    }
-
-    function addLog(msg) {
-        const feed = document.getElementById('tx-feed');
-        feed.insertAdjacentHTML('afterbegin', `<div class="tx-item">[${new Date().toLocaleTimeString()}] ${msg}</div>`);
+        } catch (e) { console.log("Connecting..."); }
     }
 
     setInterval(updateDashboard, 10000);
-    updateDashboard();
 </script>
 </body>
 </html>
